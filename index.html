@@ -76,42 +76,50 @@
     </div>
 
     <script>
+        let serverRunning = false;  // Zmienna do przechowywania statusu serwera
+
         document.getElementById('startButton').addEventListener('click', startServer);
         document.getElementById('stopButton').addEventListener('click', stopServer);
 
         function startServer() {
             const ramAmount = document.getElementById('ramAmount').value;
-            fetch('http://localhost:3000/start', { // Zastąp tym URL z backendu na Replit
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ ramAmount: ramAmount })
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('serverStatus').textContent = 'Uruchomiony';
-                document.getElementById('logs').textContent += '\n' + data;
-                document.getElementById('startButton').disabled = true;
-                document.getElementById('stopButton').disabled = false;
-            })
-            .catch(error => {
-                document.getElementById('logs').textContent += '\nBłąd uruchamiania serwera: ' + error;
-            });
+            if (serverRunning) {
+                document.getElementById('logs').textContent = "Serwer jest już uruchomiony.";
+                return;
+            }
+
+            fetch('http://localhost:3000/start')
+                .then(response => response.text())
+                .then(data => {
+                    serverRunning = true;
+                    document.getElementById('serverStatus').textContent = 'Uruchomiony';
+                    document.getElementById('logs').textContent = `Serwer Minecraft uruchomiony z ${ramAmount}GB RAM.`;
+                    document.getElementById('startButton').disabled = true;
+                    document.getElementById('stopButton').disabled = false;
+                })
+                .catch(error => {
+                    document.getElementById('logs').textContent = `Wystąpił błąd: ${error}`;
+                });
         }
 
         function stopServer() {
-            fetch('https://twoj-backend-url.repl.co/stop', { method: 'POST' })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('serverStatus').textContent = 'Zatrzymany';
-                document.getElementById('logs').textContent += '\n' + data;
-                document.getElementById('startButton').disabled = false;
-                document.getElementById('stopButton').disabled = true;
-            })
-            .catch(error => {
-                document.getElementById('logs').textContent += '\nBłąd zatrzymywania serwera: ' + error;
-            });
+            if (!serverRunning) {
+                document.getElementById('logs').textContent = "Serwer nie jest uruchomiony.";
+                return;
+            }
+
+            fetch('http://localhost:3000/stop')
+                .then(response => response.text())
+                .then(data => {
+                    serverRunning = false;
+                    document.getElementById('serverStatus').textContent = 'Zatrzymany';
+                    document.getElementById('logs').textContent = "Serwer Minecraft został zatrzymany.";
+                    document.getElementById('startButton').disabled = false;
+                    document.getElementById('stopButton').disabled = true;
+                })
+                .catch(error => {
+                    document.getElementById('logs').textContent = `Wystąpił błąd: ${error}`;
+                });
         }
     </script>
 </body>
