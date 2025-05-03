@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Zarządzanie serwerem Minecraft</title>
+  <style>
+    body {
+      background: #0f0f1b;
+      color: #00ffff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    h1 {
+      color: #00ff99;
+      text-shadow: 0 0 10px #00ffcc;
+    }
+    button {
+      background-color: #111;
+      color: #00ffff;
+      border: 1px solid #00ffff;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background-color: #00ffff;
+      color: #000;
+    }
+    textarea {
+      width: 90%;
+      height: 300px;
+      background-color: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: left;
+    }
+    li {
+      padding: 5px;
+      border-bottom: 1px solid #00ffff55;
+      cursor: pointer;
+    }
+    li:hover {
+      background-color: #001f1f;
+    }
+    input {
+      background-color: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 5px;
+      margin: 5px;
+    }
+    #nightMode {
+      background-color: #ff6666;
+      color: #000;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #nightMode.active {
+      background-color: #00ffff;
+      color: #000;
+    }
+    #logContainer {
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #00ffff;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #111;
+    }
+    #logContainer pre {
+      color: #0f0;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Minecraft Server Manager (Neon Style)</h1>
+
+  <button onclick="pickServerFolder()">📁 Wybierz folder serwera</button>
+  <button onclick="promptNewFile()">📄 Nowy plik</button>
+  <button onclick="promptNewFolder()">📁 Nowy folder</button>
+  <button onclick="deleteCurrent()">🗑️ Usuń plik/folder</button>
+
+  <h3>Ustawienia uruchamiania serwera</h3>
+  <label>RAM (np. 1G, 512M): </label>
+  <input type="text" id="ramAmount" value="2G">
+  <label>Plik JAR: </label>
+  <input type="text" id="jarFile" value="server.jar">
+
+  <div id="container">
+    <h3>Pliki serwera:</h3>
+    <ul id="fileList"></ul>
+    <textarea id="fileContent" style="display:none;"></textarea><br>
+    <button onclick="saveFile()" id="saveBtn" style="display:none;">💾 Zapisz</button>
+    <br><br>
+    <button onclick="startServer()">⚡ Uruchom serwer</button>
+  </div>
+
+  <button id="nightMode" onclick="toggleNightMode()">🌙 Tryb nocny</button>
+
+  <!-- Log Container for server startup process -->
+  <div id="logContainer">
+    <pre id="logOutput">Oczekiwanie na uruchomienie serwera...</pre>
+  </div>
+
+  <script src="https://replit.com/@komputer200012/CourageousLegalQueryoptimizer#index.js"></script>  <!-- Zastąp URL_Twojego_Pliku_JS_Z_Replita odpowiednim URL -->
+</body>
+</html>
