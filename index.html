@@ -3,62 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hosting serwera Minecraft</title>
+    <title>Hosting Serwera Minecraft</title>
     <style>
         body {
-    font-family: Arial, sans-serif;
-    background-color: #0f0f1b;
-    color: #00ffff;
-    text-align: center;
-    padding: 50px;
-}
+            font-family: Arial, sans-serif;
+            background-color: #0f0f1b;
+            color: #00ffff;
+            text-align: center;
+            padding: 50px;
+        }
 
-.container {
-    background-color: #1e1e2f;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    width: 300px;
-    margin: 0 auto;
-}
+        .container {
+            background-color: #1e1e2f;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            margin: 0 auto;
+        }
 
-h1 {
-    color: #ffcc00;
-}
+        h1 {
+            color: #ffcc00;
+        }
 
-button {
-    background-color: #00cc66;
-    color: white;
-    padding: 10px 20px;
-    margin: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+        button {
+            background-color: #00cc66;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-button:hover {
-    background-color: #00994d;
-}
+        button:hover {
+            background-color: #00994d;
+        }
 
-button:disabled {
-    background-color: #666;
-}
+        button:disabled {
+            background-color: #666;
+        }
 
-#status {
-    margin-top: 20px;
-    color: #ffcc00;
-}
+        #status {
+            margin-top: 20px;
+            color: #ffcc00;
+        }
 
-#logs {
-    margin-top: 30px;
-    color: #fff;
-    background-color: #333;
-    padding: 10px;
-    max-height: 200px;
-    overflow-y: scroll;
-}
-
+        #logs {
+            margin-top: 30px;
+            color: #fff;
+            background-color: #333;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: scroll;
+        }
     </style>
 </head>
 <body>
@@ -78,42 +77,42 @@ button:disabled {
 
     <script>
         document.getElementById('startButton').addEventListener('click', startServer);
-document.getElementById('stopButton').addEventListener('click', stopServer);
+        document.getElementById('stopButton').addEventListener('click', stopServer);
 
-function startServer() {
-    const ramAmount = document.getElementById('ramAmount').value;
-    fetch('/start', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ramAmount: ramAmount })
-    })
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('serverStatus').textContent = 'Uruchomiony';
-        document.getElementById('logs').textContent += '\n' + data;
-        document.getElementById('startButton').disabled = true;
-        document.getElementById('stopButton').disabled = false;
-    })
-    .catch(error => {
-        document.getElementById('logs').textContent += '\nBłąd uruchamiania serwera: ' + error;
-    });
-}
+        function startServer() {
+            const ramAmount = document.getElementById('ramAmount').value;
+            fetch('http://localhost:3000/start', { // Zastąp tym URL z backendu na Replit
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ramAmount: ramAmount })
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('serverStatus').textContent = 'Uruchomiony';
+                document.getElementById('logs').textContent += '\n' + data;
+                document.getElementById('startButton').disabled = true;
+                document.getElementById('stopButton').disabled = false;
+            })
+            .catch(error => {
+                document.getElementById('logs').textContent += '\nBłąd uruchamiania serwera: ' + error;
+            });
+        }
 
-function stopServer() {
-    fetch('/stop', { method: 'POST' })
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('serverStatus').textContent = 'Zatrzymany';
-        document.getElementById('logs').textContent += '\n' + data;
-        document.getElementById('startButton').disabled = false;
-        document.getElementById('stopButton').disabled = true;
-    })
-    .catch(error => {
-        document.getElementById('logs').textContent += '\nBłąd zatrzymywania serwera: ' + error;
-    });
-}
+        function stopServer() {
+            fetch('https://twoj-backend-url.repl.co/stop', { method: 'POST' })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('serverStatus').textContent = 'Zatrzymany';
+                document.getElementById('logs').textContent += '\n' + data;
+                document.getElementById('startButton').disabled = false;
+                document.getElementById('stopButton').disabled = true;
+            })
+            .catch(error => {
+                document.getElementById('logs').textContent += '\nBłąd zatrzymywania serwera: ' + error;
+            });
+        }
     </script>
 </body>
 </html>
