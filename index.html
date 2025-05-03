@@ -43,6 +43,47 @@
     <pre id="logContainer" style="background-color: #222; color: white; padding: 10px; height: 200px; overflow-y: scroll;">
     </pre>
 
-    <script src="index.js"></script>
+    <script>
+        // Funkcja do uruchamiania serwera Minecraft
+function startServer() {
+    const ramAmount = document.getElementById('ramAmount').value;
+    const jarFile = document.getElementById('jarFile').value;
+    const logContainer = document.getElementById('logContainer');
+
+    // Sprawdzanie, czy wszystkie dane zostały wprowadzone
+    if (!ramAmount || !jarFile) {
+        alert("Proszę wprowadzić zarówno ilość RAM, jak i nazwę pliku .jar");
+        return;
+    }
+
+    // Logowanie uruchamiania serwera w konsoli
+    logContainer.textContent = `Uruchamiam serwer Minecraft z plikiem ${jarFile} i przydzieloną pamięcią RAM: ${ramAmount}...`;
+
+    // Wysyłanie żądania do backendu na Replit
+    fetch('https://twoj-backend-na-replit.repl.co/start', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ramAmount: ramAmount,
+            jarFile: jarFile
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Pokazywanie odpowiedzi z backendu
+        logContainer.textContent += `\nSerwer Minecraft został uruchomiony z ${ramAmount} GB RAM i plikiem ${jarFile}.`;
+    })
+    .catch(error => {
+        // Obsługa błędów
+        logContainer.textContent += `\nWystąpił błąd: ${error.message}`;
+    });
+}
+
+// Inicjalizacja
+document.getElementById('startServerButton').addEventListener('click', startServer);
+
+    </script>
 </body>
 </html>
