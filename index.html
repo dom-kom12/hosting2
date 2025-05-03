@@ -4,34 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uruchom Serwer Minecraft</title>
-    <script>
-        function startServer() {
-            fetch('https://replit.com/@komputer200012/CourageousLegalQueryoptimizer#index.js/start', {
-                method: 'POST', // lub GET w zależności od konfiguracji
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ramAmount: document.getElementById('ramAmount').value,
-                    jarFile: document.getElementById('jarFile').value
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Serwer uruchomiony:', data);
-                alert('Serwer Minecraft został uruchomiony!');
-            })
-            .catch(error => {
-                console.error('Błąd:', error);
-                alert('Wystąpił błąd podczas uruchamiania serwera.');
-            });
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f1b;
+            color: #00ffff;
+            padding: 20px;
         }
-    </script>
+        button {
+            background-color: #00ffff;
+            border: none;
+            color: black;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        button:hover {
+            background-color: #0099cc;
+        }
+    </style>
 </head>
 <body>
-    <h1>Uruchom serwer Minecraft</h1>
-    <input type="text" id="ramAmount" placeholder="Ilość RAM (GB)">
-    <input type="text" id="jarFile" placeholder="Nazwa pliku .jar">
-    <button onclick="startServer()">Uruchom serwer</button>
+    <h1>Uruchom Serwer Minecraft</h1>
+    <label for="ramAmount">Ilość RAM (GB): </label>
+    <input type="number" id="ramAmount" placeholder="Np. 2" required>
+    <br>
+    <label for="jarFile">Nazwa pliku .jar: </label>
+    <input type="text" id="jarFile" placeholder="Np. minecraft_server.jar" required>
+    <br>
+    <button id="startServerButton">Uruchom serwer</button>
+
+    <h2>Logi:</h2>
+    <pre id="logContainer" style="background-color: #222; color: white; padding: 10px; height: 200px; overflow-y: scroll;">
+    </pre>
+
+    <script src="index.js"></script>
 </body>
 </html>
