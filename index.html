@@ -3,115 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikacja Minecraft</title>
-    <style>
-        body {
-            background-color: #0f0f1b;
-            color: #00ffff;
-            font-family: Arial, sans-serif;
+    <title>Uruchom Serwer Minecraft</title>
+    <script>
+        function startServer() {
+            fetch('https://twoj-backend-na-replit.repl.co/start', {
+                method: 'POST', // lub GET w zależności od konfiguracji
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ramAmount: document.getElementById('ramAmount').value,
+                    jarFile: document.getElementById('jarFile').value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Serwer uruchomiony:', data);
+                alert('Serwer Minecraft został uruchomiony!');
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                alert('Wystąpił błąd podczas uruchamiania serwera.');
+            });
         }
-
-        #nightMode.active {
-            background-color: #222;
-            color: #fff;
-        }
-
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #555;
-        }
-
-        #logContainer {
-            margin-top: 20px;
-            height: 200px;
-            overflow-y: auto;
-            background-color: #222;
-            color: #fff;
-            padding: 10px;
-        }
-
-        #logOutput {
-            white-space: pre-wrap;
-        }
-    </style>
+    </script>
 </head>
 <body>
-
-    <h1>Serwer Minecraft - Panel Zarządzania</h1>
-
-    <button id="nightMode">Przełącz tryb nocny</button>
-    <button id="startServer">Uruchom Serwer</button>
-
-    <div id="logContainer">
-        <pre id="logOutput">Logi...</pre>
-    </div>
-
-    <script>
-      // Funkcja do przełączania trybu nocnego
-function toggleNightMode() {
-    const nightModeButton = document.getElementById('nightMode');
-    const body = document.body;
-
-    nightModeButton.classList.toggle('active');
-    if (nightModeButton.classList.contains('active')) {
-        body.style.backgroundColor = "#222";
-        body.style.color = "#fff";
-        localStorage.setItem('nightMode', 'true');
-    } else {
-        body.style.backgroundColor = "#0f0f1b";
-        body.style.color = "#00ffff";
-        localStorage.setItem('nightMode', 'false');
-    }
-}
-
-// Funkcja do uruchamiania serwera Minecraft
-function startServer() {
-    const logContainer = document.getElementById('logContainer');
-    const logOutput = document.getElementById('logOutput');
-
-    logOutput.textContent = "Uruchamiam serwer Minecraft...";
-
-    // Wysłanie żądania POST do backendu, aby uruchomić serwer
-    fetch('/start-server', {
-        method: 'POST'
-    })
-    .then(response => response.text())
-    .then(data => {
-        logOutput.textContent += "\n" + data;
-    })
-    .catch(error => {
-        logOutput.textContent += "\nBłąd: " + error;
-    });
-
-    // Przewijanie logów na dół
-    logContainer.scrollTop = logContainer.scrollHeight;
-}
-
-// Inicjalizacja aplikacji
-window.onload = function() {
-    // Sprawdzanie, czy tryb nocny jest aktywowany
-    const isNightMode = localStorage.getItem('nightMode') === 'true';
-    if (isNightMode) {
-        document.getElementById('nightMode').classList.add('active');
-        document.body.style.backgroundColor = "#222";
-        document.body.style.color = "#fff";
-    }
-
-    // Event listener do przycisku "Przełącz tryb nocny"
-    document.getElementById('nightMode').addEventListener('click', toggleNightMode);
-
-    // Event listener do przycisku "Uruchom Serwer"
-    document.getElementById('startServer').addEventListener('click', startServer);
-}
-
-    </script>
+    <h1>Uruchom serwer Minecraft</h1>
+    <input type="text" id="ramAmount" placeholder="Ilość RAM (GB)">
+    <input type="text" id="jarFile" placeholder="Nazwa pliku .jar">
+    <button onclick="startServer()">Uruchom serwer</button>
 </body>
 </html>
