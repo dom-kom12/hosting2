@@ -3,153 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uruchom Serwer Minecraft</title>
+    <title>Hosting serwera Minecraft</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #0f0f1b;
-            color: #00ffff;
-            padding: 20px;
-        }
-        button {
-            background-color: #00ffff;
-            border: none;
-            color: black;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        input {
-            padding: 10px;
-            font-size: 16px;
-            margin: 5px 0;
-        }
-        button:hover {
-            background-color: #0099cc;
-        }
+    font-family: Arial, sans-serif;
+    background-color: #0f0f1b;
+    color: #00ffff;
+    text-align: center;
+    padding: 50px;
+}
+
+.container {
+    background-color: #1e1e2f;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    width: 300px;
+    margin: 0 auto;
+}
+
+h1 {
+    color: #ffcc00;
+}
+
+button {
+    background-color: #00cc66;
+    color: white;
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #00994d;
+}
+
+button:disabled {
+    background-color: #666;
+}
+
+#status {
+    margin-top: 20px;
+    color: #ffcc00;
+}
+
+#logs {
+    margin-top: 30px;
+    color: #fff;
+    background-color: #333;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
     </style>
 </head>
 <body>
-    <h1>Uruchom Serwer Minecraft</h1>
-    <label for="ramAmount">Ilość RAM (GB): </label>
-    <input type="number" id="ramAmount" placeholder="Np. 2" required>
-    <br>
-    <label for="jarFile">Nazwa pliku .jar: </label>
-    <input type="text" id="jarFile" placeholder="Np. minecraft_server.jar" required>
-    <br>
-    <button id="startServerButton">Uruchom serwer</button>
-
-    <h2>Logi:</h2>
-    <pre id="logContainer" style="background-color: #222; color: white; padding: 10px; height: 200px; overflow-y: scroll;">
-    </pre>
+    <div class="container">
+        <h1>Hosting Serwera Minecraft</h1>
+        <div class="controls">
+            <label for="ramAmount">Ilość RAM (GB):</label>
+            <input type="number" id="ramAmount" value="2" min="1" max="8" step="1">
+            <button id="startButton">Uruchom Serwer</button>
+            <button id="stopButton">Zatrzymaj Serwer</button>
+        </div>
+        <div id="status">
+            <h3>Status: <span id="serverStatus">Zatrzymany</span></h3>
+        </div>
+        <div id="logs"></div>
+    </div>
 
     <script>
-import fetch from "node-fetch"; // Upewnij się, że masz zainstalowaną paczkę node-fetch (npm install node-fetch)
+        document.getElementById('startButton').addEventListener('click', startServer);
+document.getElementById('stopButton').addEventListener('click', stopServer);
 
-async function getHTML(url) {
-    try {
-        // Sprawdzamy, czy URL jest prawidłowy
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Błąd pobierania pliku: ${response.statusText}`);
-        }
-
-        const text = await response.text();
-        console.log(text); // Wyświetlamy pobrany HTML w konsoli
-    } catch (error) {
-        console.error(`Wystąpił błąd: ${error.message}`);
-    }
-}
-
-// Funkcja uruchamiająca serwer Minecraft
 function startServer() {
-    const ramAmount = document.getElementById("ramAmount").value;
-    const jarFile = document.getElementById("jarFile").value;
-    const logContainer = document.getElementById("logContainer");
-    const logOutput = document.getElementById("logOutput");
-
-    // Logika uruchamiania serwera
-    logOutput.textContent = `Uruchamiam serwer Minecraft z plikiem ${jarFile} i przydzieloną pamięcią RAM: ${ramAmount}...`;
-
-    // Możesz tu dodać kod, który będzie komunikować się z serwerem, uruchamiając go w tle, np. za pomocą Node.js i child_process
-
-    // Przykład: Odczyt i zapis do logów
-    logContainer.scrollTop = logContainer.scrollHeight;
-    logOutput.textContent += "\nSerwer jest uruchamiany...";
-
-    // Przykład uruchamiania strony na Vercel (Używamy funkcji getHTML)
-    const url =
-        "https://hosting2-git-main-dominks-projects-3910b586.vercel.app/index.html";
-    getHTML(url);
+    const ramAmount = document.getElementById('ramAmount').value;
+    fetch('/start', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ramAmount: ramAmount })
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('serverStatus').textContent = 'Uruchomiony';
+        document.getElementById('logs').textContent += '\n' + data;
+        document.getElementById('startButton').disabled = true;
+        document.getElementById('stopButton').disabled = false;
+    })
+    .catch(error => {
+        document.getElementById('logs').textContent += '\nBłąd uruchamiania serwera: ' + error;
+    });
 }
 
-// Funkcja do wyboru folderu serwera
-function pickServerFolder() {
-    alert("Wybieranie folderu serwera nie jest obsługiwane w tej wersji.");
+function stopServer() {
+    fetch('/stop', { method: 'POST' })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('serverStatus').textContent = 'Zatrzymany';
+        document.getElementById('logs').textContent += '\n' + data;
+        document.getElementById('startButton').disabled = false;
+        document.getElementById('stopButton').disabled = true;
+    })
+    .catch(error => {
+        document.getElementById('logs').textContent += '\nBłąd zatrzymywania serwera: ' + error;
+    });
 }
-
-// Funkcja do utworzenia nowego pliku
-function promptNewFile() {
-    const fileName = prompt("Podaj nazwę nowego pliku:");
-    if (fileName) {
-        alert(`Tworzę nowy plik o nazwie: ${fileName}`);
-        // Tutaj dodaj kod, który utworzy nowy plik w odpowiedniej lokalizacji
-    }
-}
-
-// Funkcja do utworzenia nowego folderu
-function promptNewFolder() {
-    const folderName = prompt("Podaj nazwę nowego folderu:");
-    if (folderName) {
-        alert(`Tworzę nowy folder o nazwie: ${folderName}`);
-        // Tutaj dodaj kod, który utworzy nowy folder w odpowiedniej lokalizacji
-    }
-}
-
-// Funkcja do usunięcia bieżącego pliku lub folderu
-function deleteCurrent() {
-    const confirmation = confirm("Czy na pewno chcesz usunąć ten plik/folder?");
-    if (confirmation) {
-        alert("Plik lub folder został usunięty.");
-        // Dodaj kod do usuwania pliku lub folderu
-    }
-}
-
-// Funkcja do zapisywania pliku
-function saveFile() {
-    const content = document.getElementById("fileContent").value;
-    alert("Plik został zapisany.");
-    // Kod do zapisania treści pliku
-}
-
-// Funkcja do przełączania trybu nocnego
-function toggleNightMode() {
-    const nightModeButton = document.getElementById("nightMode");
-    const body = document.body;
-
-    nightModeButton.classList.toggle("active");
-    if (nightModeButton.classList.contains("active")) {
-        body.style.backgroundColor = "#222";
-        body.style.color = "#fff";
-    } else {
-        body.style.backgroundColor = "#0f0f1b";
-        body.style.color = "#00ffff";
-    }
-}
-
-// Funkcja do wybierania pliku z serwera
-function selectServerFile(fileName) {
-    alert(`Wybieram plik: ${fileName}`);
-    // Możesz tu zaimplementować funkcję, która wyświetli zawartość pliku
-}
-
-// Inicjalizacja aplikacji
-window.onload = function () {
-    console.log("Aplikacja załadowana");
-    // Możesz tu dodać kod do załadowania plików z serwera itp.
-};
-
     </script>
 </body>
 </html>
